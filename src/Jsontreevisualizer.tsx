@@ -12,9 +12,13 @@ import ReactFlow, {
   type Connection,
   type NodeChange,
   type EdgeChange,
+  useReactFlow,
+  getNodesBounds,
+  getViewportForBounds,
 } from 'reactflow';
 import toast from 'react-hot-toast';
 import 'reactflow/dist/style.css';
+import { toPng } from 'html-to-image';
 
 // Type definitions
 interface NodeData {
@@ -76,6 +80,39 @@ const JsonTreeVisualizer: React.FC = () => {
     }
   ]
 }`;
+  // imagedownload
+
+  const imageWidth = 1024;
+  const imageHeight = 768;
+
+
+  const { getNodes } = useReactFlow();
+  const onClick = () => {
+    // we calculate a transform for the nodes so that all nodes are visible
+    // we then overwrite the transform of the `.react-flow__viewport` element
+    // with the style option of the html-to-image library
+    const nodesBounds = getNodesBounds(getNodes());
+    const viewport = getViewportForBounds(nodesBounds, imageWidth, imageHeight, 0.5, 2);
+    //@ts-ignore
+    toPng(document.querySelector('.react-flow__viewport'), {
+      backgroundColor: '#1a365d',
+      width: imageWidth,
+      height: imageHeight,
+      style: {
+        width: imageWidth,
+        height: imageHeight,
+        transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
+      },
+    }).then(downloadImage);
+  };
+
+  function downloadImage(dataUrl: any) {
+    const a = document.createElement('a');
+
+    a.setAttribute('download', 'reactflow.png');
+    a.setAttribute('href', dataUrl);
+    a.click();
+  }
 
   // Enhanced JSON error parser
   const parseJsonWithErrorDetails = (jsonString: string): { data?: any; error?: JsonError } => {
@@ -494,16 +531,16 @@ const JsonTreeVisualizer: React.FC = () => {
             {/* JSON Status Indicator */}
             <div className="flex items-center gap-2">
               <div className={`w-3 h-3 rounded-full ${jsonError
-                  ? 'bg-red-500'
-                  : jsonInput.trim() && !jsonError
-                    ? 'bg-green-500'
-                    : 'bg-gray-400'
+                ? 'bg-red-500'
+                : jsonInput.trim() && !jsonError
+                  ? 'bg-green-500'
+                  : 'bg-gray-400'
                 }`}></div>
               <span className={`text-sm ${jsonError
-                  ? 'text-red-600'
-                  : jsonInput.trim() && !jsonError
-                    ? 'text-green-600'
-                    : isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                ? 'text-red-600'
+                : jsonInput.trim() && !jsonError
+                  ? 'text-green-600'
+                  : isDarkMode ? 'text-gray-400' : 'text-gray-500'
                 }`}>
                 {jsonError
                   ? 'Invalid JSON'
@@ -514,6 +551,12 @@ const JsonTreeVisualizer: React.FC = () => {
               </span>
             </div>
 
+            {/*Image Download React Flow*/}
+
+            <button onClick={onClick} className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Download Image
+            </button>
+
             {/* Quick resize buttons */}
             <div className="flex items-center gap-2">
               <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -522,10 +565,10 @@ const JsonTreeVisualizer: React.FC = () => {
               <button
                 onClick={setLeftPanelToNarrow}
                 className={`px-2 py-1 text-xs rounded ${leftPanelWidth <= 280
-                    ? 'bg-blue-600 text-white'
-                    : isDarkMode
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-blue-600 text-white'
+                  : isDarkMode
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
               >
                 Narrow
@@ -533,10 +576,10 @@ const JsonTreeVisualizer: React.FC = () => {
               <button
                 onClick={setLeftPanelToMedium}
                 className={`px-2 py-1 text-xs rounded ${leftPanelWidth > 280 && leftPanelWidth <= 480
-                    ? 'bg-blue-600 text-white'
-                    : isDarkMode
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-blue-600 text-white'
+                  : isDarkMode
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
               >
                 Medium
@@ -544,10 +587,10 @@ const JsonTreeVisualizer: React.FC = () => {
               <button
                 onClick={setLeftPanelToWide}
                 className={`px-2 py-1 text-xs rounded ${leftPanelWidth > 480
-                    ? 'bg-blue-600 text-white'
-                    : isDarkMode
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-blue-600 text-white'
+                  : isDarkMode
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
               >
                 Wide
@@ -557,8 +600,8 @@ const JsonTreeVisualizer: React.FC = () => {
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
               className={`p-2 rounded-lg transition-colors ${isDarkMode
-                  ? 'bg-gray-700 text-yellow-400 hover:bg-gray-600'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-gray-700 text-yellow-400 hover:bg-gray-600'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
             >
               {isDarkMode ? '☀️' : '🌙'}
@@ -588,10 +631,10 @@ const JsonTreeVisualizer: React.FC = () => {
                 onChange={(e) => setJsonInput(e.target.value)}
                 placeholder="Paste or type JSON data here..."
                 className={`w-full h-40 p-3 border rounded-lg font-mono text-sm resize-none ${jsonError
-                    ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
-                    : isDarkMode
-                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                      : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                  ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                  : isDarkMode
+                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
+                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                   } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               />
 
@@ -610,8 +653,8 @@ const JsonTreeVisualizer: React.FC = () => {
                 onClick={generateTree}
                 disabled={!!jsonError}
                 className={`flex-1 px-3 py-2 rounded-lg transition-colors font-medium text-sm ${jsonError
-                    ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
               >
                 Generate Tree
@@ -619,8 +662,8 @@ const JsonTreeVisualizer: React.FC = () => {
               <button
                 onClick={loadSample}
                 className={`px-3 py-2 rounded-lg transition-colors font-medium text-sm ${isDarkMode
-                    ? 'bg-gray-700 text-white hover:bg-gray-600'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-gray-700 text-white hover:bg-gray-600'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
               >
                 Sample
@@ -704,8 +747,8 @@ const JsonTreeVisualizer: React.FC = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="$.user.address.city"
                 className={`w-full p-3 border rounded-lg ${isDarkMode
-                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                  ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
+                  : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                   } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
@@ -727,10 +770,10 @@ const JsonTreeVisualizer: React.FC = () => {
                 Validation Status
               </h3>
               <div className={`text-sm p-3 rounded-lg ${jsonError
-                  ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
-                  : jsonInput.trim() && !jsonError
-                    ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
-                    : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400'
+                ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
+                : jsonInput.trim() && !jsonError
+                  ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
+                  : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400'
                 }`}>
                 {jsonError
                   ? `❌ Invalid JSON (Line ${jsonError.line})`
@@ -810,19 +853,19 @@ const JsonTreeVisualizer: React.FC = () => {
         <div
           ref={resizerRef}
           className={`w-1 cursor-col-resize flex-shrink-0 transition-colors duration-200 ${isResizing
-              ? 'bg-blue-500'
-              : isDarkMode
-                ? 'bg-gray-600 hover:bg-gray-500'
-                : 'bg-gray-300 hover:bg-gray-400'
+            ? 'bg-blue-500'
+            : isDarkMode
+              ? 'bg-gray-600 hover:bg-gray-500'
+              : 'bg-gray-300 hover:bg-gray-400'
             }`}
           onMouseDown={handleMouseDown}
         >
           <div className="w-full h-full relative">
             <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-8 rounded-full ${isResizing
-                ? 'bg-blue-400'
-                : isDarkMode
-                  ? 'bg-gray-500'
-                  : 'bg-gray-400'
+              ? 'bg-blue-400'
+              : isDarkMode
+                ? 'bg-gray-500'
+                : 'bg-gray-400'
               }`}></div>
           </div>
         </div>
