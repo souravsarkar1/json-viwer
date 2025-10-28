@@ -521,15 +521,15 @@ const JsonTreeVisualizer: React.FC = () => {
       className={`w-screen h-screen flex flex-col ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}
     >
       {/* Header */}
-      <div className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b p-4 flex-shrink-0`}>
-        <div className="w-full flex items-center justify-between">
-          <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+      <div className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b p-2 sm:p-4 flex-shrink-0`}>
+        <div className="w-full flex items-center justify-between flex-wrap gap-2">
+          <p className={`text-lg sm:text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             JSON Tree Visualizer
-          </h1>
+          </p>
 
-          <div className="flex items-center gap-4">
-            {/* JSON Status Indicator */}
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
+            {/* JSON Status Indicator - Hidden on mobile */}
+            <div className="hidden sm:flex items-center gap-2">
               <div className={`w-3 h-3 rounded-full ${jsonError
                 ? 'bg-red-500'
                 : jsonInput.trim() && !jsonError
@@ -551,14 +551,13 @@ const JsonTreeVisualizer: React.FC = () => {
               </span>
             </div>
 
-            {/*Image Download React Flow*/}
-
-            <button onClick={onClick} className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            {/* Download Button - Hidden on mobile */}
+            <button onClick={onClick} className={`hidden sm:block text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               Download Image
             </button>
 
-            {/* Quick resize buttons */}
-            <div className="flex items-center gap-2">
+            {/* Quick resize buttons - Hidden on mobile */}
+            <div className="hidden md:flex items-center gap-2">
               <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 Panel:
               </span>
@@ -611,16 +610,16 @@ const JsonTreeVisualizer: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden relative">
-        {/* Left Panel */}
+      <div className="flex-1 flex overflow-hidden relative flex-col md:flex-row">
+        {/* Left Panel - Full width on mobile, sidebar on desktop */}
         <div
-          className={`flex-shrink-0 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r flex flex-col`}
-          style={{ width: leftPanelWidth }}
+          className={`w-full md:w-auto md:flex-shrink-0 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} md:border-r flex flex-col overflow-y-auto md:overflow-y-visible`}
+          style={{ width: `min(100%, ${leftPanelWidth}px)` }}
         >
 
           {/* JSON Input */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 className={`text-lg font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+          <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+            <h2 className={`text-base sm:text-lg font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               JSON Input
             </h2>
 
@@ -630,7 +629,7 @@ const JsonTreeVisualizer: React.FC = () => {
                 value={jsonInput}
                 onChange={(e) => setJsonInput(e.target.value)}
                 placeholder="Paste or type JSON data here..."
-                className={`w-full h-40 p-3 border rounded-lg font-mono text-sm resize-none ${jsonError
+                className={`w-full h-32 sm:h-40 p-2 sm:p-3 border rounded-lg font-mono text-xs sm:text-sm resize-none ${jsonError
                   ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
                   : isDarkMode
                     ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
@@ -648,20 +647,20 @@ const JsonTreeVisualizer: React.FC = () => {
               )}
             </div>
 
-            <div className="flex gap-2 mt-4">
+            <div className="flex gap-2 mt-3 sm:mt-4 flex-wrap">
               <button
                 onClick={generateTree}
                 disabled={!!jsonError}
-                className={`flex-1 px-3 py-2 rounded-lg transition-colors font-medium text-sm ${jsonError
+                className={`flex-1 min-w-[80px] px-2 sm:px-3 py-2 rounded-lg transition-colors font-medium text-xs sm:text-sm ${jsonError
                   ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
                   : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
               >
-                Generate Tree
+                Generate
               </button>
               <button
                 onClick={loadSample}
-                className={`px-3 py-2 rounded-lg transition-colors font-medium text-sm ${isDarkMode
+                className={`px-2 sm:px-3 py-2 rounded-lg transition-colors font-medium text-xs sm:text-sm ${isDarkMode
                   ? 'bg-gray-700 text-white hover:bg-gray-600'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
@@ -670,13 +669,13 @@ const JsonTreeVisualizer: React.FC = () => {
               </button>
               <button
                 onClick={loadBrokenSample}
-                className="px-3 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium text-sm"
+                className="px-2 sm:px-3 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium text-xs sm:text-sm"
               >
                 Test
               </button>
               <button
                 onClick={clearAll}
-                className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
+                className="px-2 sm:px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-xs sm:text-sm"
               >
                 Clear
               </button>
@@ -685,15 +684,15 @@ const JsonTreeVisualizer: React.FC = () => {
 
           {/* Error Display */}
           {jsonError && (
-            <div className="mx-6 mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <div className="flex items-start gap-3">
+            <div className="mx-3 my-3 sm:mx-6 sm:mb-6 p-3 sm:p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <div className="flex items-start gap-2 sm:gap-3">
                 <div className="text-red-500 mt-1">⚠️</div>
                 <div className="flex-1">
-                  <h3 className="text-red-800 dark:text-red-200 font-semibold text-sm mb-2">
+                  <h3 className="text-red-800 dark:text-red-200 font-semibold text-xs sm:text-sm mb-2">
                     JSON Syntax Error
                   </h3>
 
-                  <div className="space-y-2 text-sm">
+                  <div className="space-y-2 text-xs sm:text-sm">
                     <div>
                       <span className="text-red-700 dark:text-red-300 font-medium">Error:</span>
                       <span className="text-red-600 dark:text-red-400 ml-1">{jsonError.message}</span>
@@ -706,47 +705,40 @@ const JsonTreeVisualizer: React.FC = () => {
                       </span>
                     </div>
 
-                    {jsonError.suggestion && (
+                    {jsonError.context && (
                       <div>
-                        <span className="text-red-700 dark:text-red-300 font-medium">Suggestion:</span>
-                        <span className="text-red-600 dark:text-red-400 ml-1">{jsonError.suggestion}</span>
+                        <span className="text-red-700 dark:text-red-300 font-medium block mb-1">Context:</span>
+                        <pre className="text-xs bg-red-100 dark:bg-red-900/40 p-2 rounded border overflow-x-auto">
+                          <code className="text-red-800 dark:text-red-200">{jsonError.context}</code>
+                        </pre>
                       </div>
                     )}
+
+                    <button
+                      onClick={highlightErrorLine}
+                      className="mt-3 px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
+                    >
+                      Jump to Error
+                    </button>
                   </div>
-
-                  {jsonError.context && (
-                    <div className="mt-3">
-                      <div className="text-red-700 dark:text-red-300 font-medium text-xs mb-1">Context:</div>
-                      <pre className="text-xs bg-red-100 dark:bg-red-900/40 p-2 rounded border overflow-x-auto">
-                        <code className="text-red-800 dark:text-red-200">{jsonError.context}</code>
-                      </pre>
-                    </div>
-                  )}
-
-                  <button
-                    onClick={highlightErrorLine}
-                    className="mt-3 px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
-                  >
-                    Jump to Error
-                  </button>
                 </div>
               </div>
             </div>
           )}
 
           {/* Search */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 className={`text-lg font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+          <div className="p-3 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 className={`text-base sm:text-lg font-semibold mb-3 sm:mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               Search
             </h2>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="$.user.address.city"
-                className={`w-full p-3 border rounded-lg ${isDarkMode
+                className={`w-full p-2 sm:p-3 border rounded-lg text-sm ${isDarkMode
                   ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                   : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                   } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
@@ -755,15 +747,15 @@ const JsonTreeVisualizer: React.FC = () => {
 
               <button
                 onClick={handleSearch}
-                className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium"
+                className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium text-sm"
               >
                 Search
               </button>
             </div>
           </div>
 
-          {/* Legend & Instructions */}
-          <div className="p-6 flex-1 overflow-y-auto">
+          {/* Legend & Instructions - Hidden on mobile */}
+          <div className="hidden md:block p-6 flex-1 overflow-y-auto">
             {/* Validation Status */}
             <div className="mb-6">
               <h3 className={`text-sm font-medium mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -839,7 +831,7 @@ const JsonTreeVisualizer: React.FC = () => {
                   </h4>
                   <ul className={`space-y-1 text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     <li>• Missing commas between properties</li>
-                    <li>• Trailing commas before{`}`}or {`]`}</li>
+                    <li>• Trailing commas before {`}`} or {`]`}</li>
                     <li>• Unescaped quotes in strings</li>
                     <li>• Missing closing braces or brackets</li>
                   </ul>
@@ -849,10 +841,10 @@ const JsonTreeVisualizer: React.FC = () => {
           </div>
         </div>
 
-        {/* Resizer */}
+        {/* Resizer - Hidden on mobile */}
         <div
           ref={resizerRef}
-          className={`w-1 cursor-col-resize flex-shrink-0 transition-colors duration-200 ${isResizing
+          className={`hidden md:block w-1 cursor-col-resize flex-shrink-0 transition-colors duration-200 ${isResizing
             ? 'bg-blue-500'
             : isDarkMode
               ? 'bg-gray-600 hover:bg-gray-500'
@@ -870,8 +862,8 @@ const JsonTreeVisualizer: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Panel - Tree Visualization */}
-        <div className="flex-1 flex flex-col">
+        {/* Right Panel - Tree Visualization - Always Visible */}
+        <div className="flex-1 flex flex-col min-h-[400px] md:min-h-0">
           <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} flex-1`}>
             <ReactFlow
               nodes={nodes}
@@ -887,8 +879,8 @@ const JsonTreeVisualizer: React.FC = () => {
               <MiniMap className={`${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`} />
               <Background gap={12} size={1} color={isDarkMode ? '#374151' : '#e5e7eb'} />
 
-              <Panel position="top-left" className={`${isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'} p-3 rounded shadow border`}>
-                <div className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              <Panel position="top-left" className={`${isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'} p-2 sm:p-3 rounded shadow border`}>
+                <div className={`text-xs sm:text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                   {nodes.length > 0 ? `${nodes.length} nodes` : 'No tree generated'}
                 </div>
                 {highlightedNodeId && (
