@@ -9,7 +9,7 @@ const App = () => {
   console.log(isAuth);
   return (
     <div>
-      <Toaster position="top-right" />
+      <Toaster position="bottom-right" />
 
       {isAuth ?
 

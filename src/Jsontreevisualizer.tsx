@@ -19,7 +19,8 @@ import ReactFlow, {
 import toast from 'react-hot-toast';
 import 'reactflow/dist/style.css';
 import { toPng } from 'html-to-image';
-
+//@ts-ignore
+import { sampleJson } from "./utils/data"
 // Type definitions
 interface NodeData {
   label: string;
@@ -60,26 +61,6 @@ const JsonTreeVisualizer: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const resizerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  // Sample JSON with potential errors for testing
-  const sampleJson = `{
-  "user": {
-    "id": 1,
-    "name": "John Doe",
-    "address": {
-      "city": "New York",
-      "country": "USA"
-    }
-  },
-  "items": [
-    {
-      "name": "item1"
-    },
-    {
-      "name": "item2"
-    }
-  ]
-}`;
   // imagedownload
 
   const imageWidth = 1024;
@@ -480,6 +461,7 @@ const JsonTreeVisualizer: React.FC = () => {
   }, [sampleJson]);
 
   // Load broken sample for testing error detection
+  //@ts-ignore
   const loadBrokenSample = useCallback(() => {
     const brokenJson = `{
   "user": {
@@ -519,6 +501,14 @@ const JsonTreeVisualizer: React.FC = () => {
   const setLeftPanelToNarrow = () => setLeftPanelWidth(250);
   const setLeftPanelToMedium = () => setLeftPanelWidth(400);
   const setLeftPanelToWide = () => setLeftPanelWidth(550);
+
+
+  // copy the json path 
+
+  const copyJsonPath = async (path: any) => {
+    await navigator.clipboard.writeText(path);
+    toast.success(`Copied: ${path}`);
+  };
 
   return (
     <div
@@ -672,12 +662,12 @@ const JsonTreeVisualizer: React.FC = () => {
               >
                 Sample
               </button>
-              <button
+              {/* <button
                 onClick={loadBrokenSample}
                 className="px-2 sm:px-3 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium text-xs sm:text-sm"
               >
                 Test
-              </button>
+              </button> */}
               <button
                 onClick={clearAll}
                 className="px-2 sm:px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-xs sm:text-sm"
@@ -770,7 +760,7 @@ const JsonTreeVisualizer: React.FC = () => {
                 ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
                 : jsonInput.trim() && !jsonError
                   ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
-                  : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400'
+                  : 'bg-gray-50 dark:bg-gray-800/50 text-white dark:text-white'
                 }`}>
                 {jsonError
                   ? `❌ Invalid JSON (Line ${jsonError.line})`
@@ -879,6 +869,7 @@ const JsonTreeVisualizer: React.FC = () => {
               fitView
               attributionPosition="bottom-left"
               className="w-full h-full"
+              onNodeClick={(_, node) => copyJsonPath(node.data.path)}
             >
               <Controls className={`${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`} />
               <MiniMap className={`${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`} />
