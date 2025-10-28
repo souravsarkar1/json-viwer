@@ -13,7 +13,7 @@ import ReactFlow, {
   type NodeChange,
   type EdgeChange,
 } from 'reactflow';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import 'reactflow/dist/style.css';
 
 // Type definitions
@@ -46,13 +46,13 @@ const JsonTreeVisualizer: React.FC = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [highlightedNodeId, setHighlightedNodeId] = useState<string | null>(null);
   const [jsonError, setJsonError] = useState<JsonError | null>(null);
-  
+
   // Resizable panel state
   const [leftPanelWidth, setLeftPanelWidth] = useState<number>(320);
   const [isResizing, setIsResizing] = useState<boolean>(false);
   const [startX, setStartX] = useState<number>(0);
   const [startWidth, setStartWidth] = useState<number>(0);
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
   const resizerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -95,13 +95,13 @@ const JsonTreeVisualizer: React.FC = () => {
       let suggestion = '';
 
       // Try to extract position information from different browser error formats
-      const positionMatch = errorMessage.match(/position (\d+)/i) || 
-                           errorMessage.match(/at position (\d+)/i) ||
-                           errorMessage.match(/at character (\d+)/i);
-      
+      const positionMatch = errorMessage.match(/position (\d+)/i) ||
+        errorMessage.match(/at position (\d+)/i) ||
+        errorMessage.match(/at character (\d+)/i);
+
       if (positionMatch) {
         position = parseInt(positionMatch[1], 10);
-        
+
         // Calculate line and column from position
         const lines = jsonString.substring(0, position).split('\n');
         line = lines.length;
@@ -114,7 +114,7 @@ const JsonTreeVisualizer: React.FC = () => {
       if (line <= lines.length) {
         const startLine = Math.max(0, line - 2);
         const endLine = Math.min(lines.length, line + 1);
-        
+
         context = lines.slice(startLine, endLine)
           .map((l, i) => {
             const lineNum = startLine + i + 1;
@@ -185,12 +185,12 @@ const JsonTreeVisualizer: React.FC = () => {
     const textarea = textareaRef.current;
     const lines = jsonInput.split('\n');
     let charPosition = 0;
-    
+
     // Calculate character position of the error line
     for (let i = 0; i < jsonError.line - 1; i++) {
       charPosition += lines[i].length + 1; // +1 for newline
     }
-    
+
     // Set cursor to error position
     textarea.focus();
     textarea.setSelectionRange(charPosition, charPosition + lines[jsonError.line - 1].length);
@@ -206,14 +206,14 @@ const JsonTreeVisualizer: React.FC = () => {
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isResizing) return;
-    
+
     const deltaX = e.clientX - startX;
     const newWidth = startWidth + deltaX;
     const containerWidth = containerRef.current?.offsetWidth || 1200;
-    
+
     const minWidth = 250;
     const maxWidth = containerWidth * 0.7;
-    
+
     const clampedWidth = Math.max(minWidth, Math.min(maxWidth, newWidth));
     setLeftPanelWidth(clampedWidth);
   }, [isResizing, startX, startWidth]);
@@ -278,10 +278,10 @@ const JsonTreeVisualizer: React.FC = () => {
     let nodeId = 0;
 
     const traverse = (
-      obj: any, 
-      parentId: string | null = null, 
-      key: string = 'root', 
-      path: string = '$', 
+      obj: any,
+      parentId: string | null = null,
+      key: string = 'root',
+      path: string = '$',
       level: number = 0
     ): string => {
       const currentId = `node-${nodeId++}`;
@@ -355,7 +355,7 @@ const JsonTreeVisualizer: React.FC = () => {
     }
 
     const result = parseJsonWithErrorDetails(jsonInput);
-    
+
     if (result.error) {
       setJsonError(result.error);
       toast.error(`JSON Error at line ${result.error.line}: ${result.error.message}`);
@@ -386,28 +386,28 @@ const JsonTreeVisualizer: React.FC = () => {
     }
 
     try {
-      const matchingNode = nodes.find((node: any) => 
-        node.data.path === searchQuery || 
+      const matchingNode = nodes.find((node: any) =>
+        node.data.path === searchQuery ||
         node.data.path.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
       if (matchingNode) {
         setHighlightedNodeId(matchingNode.id);
-        
+
         const updatedNodes = nodes.map((node: any) => ({
           ...node,
           style: getNodeStyle(
-            node.data.type, 
+            node.data.type,
             node.id === matchingNode.id
           ),
         }));
         setNodes(updatedNodes);
-        
+
         toast.success('Match found!');
       } else {
         toast.error('No match found');
         setHighlightedNodeId(null);
-        
+
         const updatedNodes = nodes.map((node: any) => ({
           ...node,
           style: getNodeStyle(node.data.type, false),
@@ -479,40 +479,36 @@ const JsonTreeVisualizer: React.FC = () => {
   const setLeftPanelToWide = () => setLeftPanelWidth(550);
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className={`w-screen h-screen flex flex-col ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}
     >
-      <Toaster position="top-right" />
-      
       {/* Header */}
       <div className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b p-4 flex-shrink-0`}>
         <div className="w-full flex items-center justify-between">
           <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             JSON Tree Visualizer
           </h1>
-          
+
           <div className="flex items-center gap-4">
             {/* JSON Status Indicator */}
             <div className="flex items-center gap-2">
-              <div className={`w-3 h-3 rounded-full ${
-                jsonError 
-                  ? 'bg-red-500' 
-                  : jsonInput.trim() && !jsonError 
-                    ? 'bg-green-500' 
+              <div className={`w-3 h-3 rounded-full ${jsonError
+                  ? 'bg-red-500'
+                  : jsonInput.trim() && !jsonError
+                    ? 'bg-green-500'
                     : 'bg-gray-400'
-              }`}></div>
-              <span className={`text-sm ${
-                jsonError 
-                  ? 'text-red-600' 
-                  : jsonInput.trim() && !jsonError 
-                    ? 'text-green-600' 
+                }`}></div>
+              <span className={`text-sm ${jsonError
+                  ? 'text-red-600'
+                  : jsonInput.trim() && !jsonError
+                    ? 'text-green-600'
                     : isDarkMode ? 'text-gray-400' : 'text-gray-500'
-              }`}>
-                {jsonError 
-                  ? 'Invalid JSON' 
-                  : jsonInput.trim() && !jsonError 
-                    ? 'Valid JSON' 
+                }`}>
+                {jsonError
+                  ? 'Invalid JSON'
+                  : jsonInput.trim() && !jsonError
+                    ? 'Valid JSON'
                     : 'No JSON'
                 }
               </span>
@@ -525,49 +521,45 @@ const JsonTreeVisualizer: React.FC = () => {
               </span>
               <button
                 onClick={setLeftPanelToNarrow}
-                className={`px-2 py-1 text-xs rounded ${
-                  leftPanelWidth <= 280 
-                    ? 'bg-blue-600 text-white' 
-                    : isDarkMode 
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                className={`px-2 py-1 text-xs rounded ${leftPanelWidth <= 280
+                    ? 'bg-blue-600 text-white'
+                    : isDarkMode
+                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 Narrow
               </button>
               <button
                 onClick={setLeftPanelToMedium}
-                className={`px-2 py-1 text-xs rounded ${
-                  leftPanelWidth > 280 && leftPanelWidth <= 480 
-                    ? 'bg-blue-600 text-white' 
-                    : isDarkMode 
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                className={`px-2 py-1 text-xs rounded ${leftPanelWidth > 280 && leftPanelWidth <= 480
+                    ? 'bg-blue-600 text-white'
+                    : isDarkMode
+                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 Medium
               </button>
               <button
                 onClick={setLeftPanelToWide}
-                className={`px-2 py-1 text-xs rounded ${
-                  leftPanelWidth > 480 
-                    ? 'bg-blue-600 text-white' 
-                    : isDarkMode 
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                className={`px-2 py-1 text-xs rounded ${leftPanelWidth > 480
+                    ? 'bg-blue-600 text-white'
+                    : isDarkMode
+                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 Wide
               </button>
             </div>
-            
+
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className={`p-2 rounded-lg transition-colors ${
-                isDarkMode 
-                  ? 'bg-gray-700 text-yellow-400 hover:bg-gray-600' 
+              className={`p-2 rounded-lg transition-colors ${isDarkMode
+                  ? 'bg-gray-700 text-yellow-400 hover:bg-gray-600'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+                }`}
             >
               {isDarkMode ? '☀️' : '🌙'}
             </button>
@@ -578,32 +570,31 @@ const JsonTreeVisualizer: React.FC = () => {
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* Left Panel */}
-        <div 
+        <div
           className={`flex-shrink-0 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r flex flex-col`}
           style={{ width: leftPanelWidth }}
         >
-          
+
           {/* JSON Input */}
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <h2 className={`text-lg font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               JSON Input
             </h2>
-            
+
             <div className="relative">
               <textarea
                 ref={textareaRef}
                 value={jsonInput}
                 onChange={(e) => setJsonInput(e.target.value)}
                 placeholder="Paste or type JSON data here..."
-                className={`w-full h-40 p-3 border rounded-lg font-mono text-sm resize-none ${
-                  jsonError 
-                    ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
-                    : isDarkMode 
-                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                className={`w-full h-40 p-3 border rounded-lg font-mono text-sm resize-none ${jsonError
+                    ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                    : isDarkMode
+                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                       : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                  } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               />
-              
+
               {/* Error indicator overlay */}
               {jsonError && (
                 <div className="absolute top-2 right-2">
@@ -613,26 +604,24 @@ const JsonTreeVisualizer: React.FC = () => {
                 </div>
               )}
             </div>
-            
+
             <div className="flex gap-2 mt-4">
               <button
                 onClick={generateTree}
                 disabled={!!jsonError}
-                className={`flex-1 px-3 py-2 rounded-lg transition-colors font-medium text-sm ${
-                  jsonError 
-                    ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+                className={`flex-1 px-3 py-2 rounded-lg transition-colors font-medium text-sm ${jsonError
+                    ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
                     : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
+                  }`}
               >
                 Generate Tree
               </button>
               <button
                 onClick={loadSample}
-                className={`px-3 py-2 rounded-lg transition-colors font-medium text-sm ${
-                  isDarkMode 
-                    ? 'bg-gray-700 text-white hover:bg-gray-600' 
+                className={`px-3 py-2 rounded-lg transition-colors font-medium text-sm ${isDarkMode
+                    ? 'bg-gray-700 text-white hover:bg-gray-600'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 Sample
               </button>
@@ -660,20 +649,20 @@ const JsonTreeVisualizer: React.FC = () => {
                   <h3 className="text-red-800 dark:text-red-200 font-semibold text-sm mb-2">
                     JSON Syntax Error
                   </h3>
-                  
+
                   <div className="space-y-2 text-sm">
                     <div>
                       <span className="text-red-700 dark:text-red-300 font-medium">Error:</span>
                       <span className="text-red-600 dark:text-red-400 ml-1">{jsonError.message}</span>
                     </div>
-                    
+
                     <div>
                       <span className="text-red-700 dark:text-red-300 font-medium">Location:</span>
                       <span className="text-red-600 dark:text-red-400 ml-1">
                         Line {jsonError.line}, Column {jsonError.column}
                       </span>
                     </div>
-                    
+
                     {jsonError.suggestion && (
                       <div>
                         <span className="text-red-700 dark:text-red-300 font-medium">Suggestion:</span>
@@ -681,7 +670,7 @@ const JsonTreeVisualizer: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  
+
                   {jsonError.context && (
                     <div className="mt-3">
                       <div className="text-red-700 dark:text-red-300 font-medium text-xs mb-1">Context:</div>
@@ -690,7 +679,7 @@ const JsonTreeVisualizer: React.FC = () => {
                       </pre>
                     </div>
                   )}
-                  
+
                   <button
                     onClick={highlightErrorLine}
                     className="mt-3 px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
@@ -707,21 +696,20 @@ const JsonTreeVisualizer: React.FC = () => {
             <h2 className={`text-lg font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               Search
             </h2>
-            
+
             <div className="space-y-4">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="$.user.address.city"
-                className={`w-full p-3 border rounded-lg ${
-                  isDarkMode 
-                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                className={`w-full p-3 border rounded-lg ${isDarkMode
+                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                     : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                  } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
-              
+
               <button
                 onClick={handleSearch}
                 className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium"
@@ -738,17 +726,16 @@ const JsonTreeVisualizer: React.FC = () => {
               <h3 className={`text-sm font-medium mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                 Validation Status
               </h3>
-              <div className={`text-sm p-3 rounded-lg ${
-                jsonError 
-                  ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300' 
-                  : jsonInput.trim() && !jsonError 
-                    ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' 
+              <div className={`text-sm p-3 rounded-lg ${jsonError
+                  ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
+                  : jsonInput.trim() && !jsonError
+                    ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
                     : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400'
-              }`}>
-                {jsonError 
-                  ? `❌ Invalid JSON (Line ${jsonError.line})` 
-                  : jsonInput.trim() && !jsonError 
-                    ? '✅ Valid JSON ready for parsing' 
+                }`}>
+                {jsonError
+                  ? `❌ Invalid JSON (Line ${jsonError.line})`
+                  : jsonInput.trim() && !jsonError
+                    ? '✅ Valid JSON ready for parsing'
                     : '⏳ Waiting for JSON input'
                 }
               </div>
@@ -780,7 +767,7 @@ const JsonTreeVisualizer: React.FC = () => {
               <h3 className={`text-sm font-medium mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                 Instructions
               </h3>
-              
+
               <div className="space-y-3 text-sm">
                 <div>
                   <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>1. Input JSON</h4>
@@ -788,28 +775,28 @@ const JsonTreeVisualizer: React.FC = () => {
                     Real-time validation shows errors with exact line/column location.
                   </p>
                 </div>
-                
+
                 <div>
                   <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>2. Fix Errors</h4>
                   <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
                     Click "Jump to Error" to navigate directly to problematic code.
                   </p>
                 </div>
-                
+
                 <div>
                   <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>3. Generate Tree</h4>
                   <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
                     Button is disabled until JSON is valid.
                   </p>
                 </div>
-                
+
                 <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
                   <h4 className={`font-medium mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                     Common Errors:
                   </h4>
                   <ul className={`space-y-1 text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     <li>• Missing commas between properties</li>
-                    <li>• Trailing commas before{ `}` }or {`]`}</li>
+                    <li>• Trailing commas before{`}`}or {`]`}</li>
                     <li>• Unescaped quotes in strings</li>
                     <li>• Missing closing braces or brackets</li>
                   </ul>
@@ -822,23 +809,21 @@ const JsonTreeVisualizer: React.FC = () => {
         {/* Resizer */}
         <div
           ref={resizerRef}
-          className={`w-1 cursor-col-resize flex-shrink-0 transition-colors duration-200 ${
-            isResizing 
-              ? 'bg-blue-500' 
-              : isDarkMode 
-                ? 'bg-gray-600 hover:bg-gray-500' 
+          className={`w-1 cursor-col-resize flex-shrink-0 transition-colors duration-200 ${isResizing
+              ? 'bg-blue-500'
+              : isDarkMode
+                ? 'bg-gray-600 hover:bg-gray-500'
                 : 'bg-gray-300 hover:bg-gray-400'
-          }`}
+            }`}
           onMouseDown={handleMouseDown}
         >
           <div className="w-full h-full relative">
-            <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-8 rounded-full ${
-              isResizing 
-                ? 'bg-blue-400' 
-                : isDarkMode 
-                  ? 'bg-gray-500' 
+            <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-8 rounded-full ${isResizing
+                ? 'bg-blue-400'
+                : isDarkMode
+                  ? 'bg-gray-500'
                   : 'bg-gray-400'
-            }`}></div>
+              }`}></div>
           </div>
         </div>
 
@@ -858,7 +843,7 @@ const JsonTreeVisualizer: React.FC = () => {
               <Controls className={`${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`} />
               <MiniMap className={`${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`} />
               <Background gap={12} size={1} color={isDarkMode ? '#374151' : '#e5e7eb'} />
-              
+
               <Panel position="top-left" className={`${isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'} p-3 rounded shadow border`}>
                 <div className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                   {nodes.length > 0 ? `${nodes.length} nodes` : 'No tree generated'}
