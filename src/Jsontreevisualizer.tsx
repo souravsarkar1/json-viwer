@@ -91,6 +91,11 @@ const JsonTreeVisualizer: React.FC = () => {
     // we calculate a transform for the nodes so that all nodes are visible
     // we then overwrite the transform of the `.react-flow__viewport` element
     // with the style option of the html-to-image library
+    if (!jsonInput.trim()) {
+      toast.error('Please enter JSON data');
+      return;
+    }
+
     const nodesBounds = getNodesBounds(getNodes());
     const viewport = getViewportForBounds(nodesBounds, imageWidth, imageHeight, 0.5, 2);
     //@ts-ignore
