@@ -124,7 +124,7 @@ localStorage.setItem("isAuth", JSON.stringify({isAuth : true}))
   };
 
   return (
-    <div style={{width : "100vw", height : "100vh"}} className="bg-gradient-to-br from-indigo-50 via-white to-cyan-50 flex items-center justify-center p-4 relative overflow-hidden">
+    <div style={{width : "100vw", maxHeight : "100vh", minHeight : "100vh", overflowY : "auto"}} className="bg-gradient-to-br from-indigo-50 via-white to-cyan-50 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background decorations */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full opacity-20 blur-3xl"></div>
@@ -152,10 +152,6 @@ localStorage.setItem("isAuth", JSON.stringify({isAuth : true}))
       <div className={`relative z-10 w-full max-w-md transform transition-all duration-1000 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
         {/* Logo/Brand section */}
         <div className="text-center mb-8">
-          
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-indigo-900 to-purple-900 bg-clip-text text-transparent mb-2">
-            Welcome Back
-          </h1>
           <p className="text-gray-600 font-medium">
             Sign in to your account to continue
           </p>
