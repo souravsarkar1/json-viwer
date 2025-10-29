@@ -120,7 +120,7 @@ localStorage.setItem("isAuth", JSON.stringify({isAuth : true}))
 
   // Handle social login
   const handleSocialLogin = (provider: string) => {
-    alert(`${provider} login clicked! Implement your ${provider} OAuth flow here.`);
+    toast.error(`${provider} login clicked! Coming soong`);
   };
 
   return (
@@ -287,7 +287,7 @@ localStorage.setItem("isAuth", JSON.stringify({isAuth : true}))
               <button
                 type="button"
                 className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
-                onClick={() => alert('Forgot password clicked! Implement password reset flow.')}
+                onClick={() => toast.error('Forgot password clicked! Coming soon')}
               >
                 Forgot password?
               </button>
@@ -367,7 +367,7 @@ localStorage.setItem("isAuth", JSON.stringify({isAuth : true}))
           <p className="text-gray-600">
             Don't have an account?{' '}
             <button
-              onClick={() => alert('Sign up clicked! Implement registration flow.')}
+              onClick={() => toast.error('Sign up clicked! Coming Soong')}
               className="font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
             >
               Sign up for free
